@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Blaue Karten – 33 Lernmethoden</title>
+<style>
+:root{
+--bg:#0a1630; --bg2:#0b1d3d; --card:#0f2747; --card2:#123057;
+--text:#e6f0ff; --muted:#b7c6e3; --ring:rgba(122,162,247,.28); --shadow:rgba(3,8,20,.55);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+color:var(--text);background:radial-gradient(1200px 400px at 20% -10%,#123a7a33,transparent 60%),
+linear-gradient(180deg,var(--bg),var(--bg2));-webkit-font-smoothing:antialiased}
+.container{max-width:1280px;margin:0 auto;padding:0 20px}
+header{padding:48px 0 16px}
+h1{margin:0 0 6px;font-size:clamp(24px,4vw,38px)}
+.lead{margin:0;color:var(--muted);font-size:14px}
+
+/* ── Controls ── */
+.controls{position:sticky;top:0;z-index:20;
+background:linear-gradient(180deg,#0b1730f0,#0b1730cc);
+border-bottom:1px solid #ffffff12;backdrop-filter:blur(8px)}
+.controls .wrap{padding:12px 0;display:flex;flex-direction:column;gap:10px}
+
+.search-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search{position:relative;flex:1 1 220px}
+.search input{width:100%;padding:9px 9px 9px 36px;border-radius:10px;
+border:1px solid var(--ring);background:var(--card);color:var(--text);outline:none;font-size:13px}
+.search .icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.6;pointer-events:none;font-size:14px}
+
+.filter-group{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.filter-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;margin-right:2px}
+
+.pill{border:1px solid var(--ring);background:var(--card);color:var(--text);
+padding:6px 12px;border-radius:999px;cursor:pointer;font-weight:600;font-size:12px;
+transition:background .15s,box-shadow .15s;white-space:nowrap}
+.pill.active{background:var(--card2);box-shadow:0 0 0 2px rgba(122,162,247,.4)}
+.pill:hover{background:var(--card2)}
+
+.result-count{font-size:12px;color:var(--muted);padding:2px 0 6px}
+
+/* ── Grid ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:20px 0 60px}
+
+/* ── Card flip ── */
+.card{perspective:1200px;cursor:pointer}
+.card-inner{position:relative;width:100%;height:290px;transform-style:preserve-3d;
+transition:transform .55s cubic-bezier(.4,0,.2,1);border-radius:16px}
+.card.flipped .card-inner{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;padding:16px;display:flex;flex-direction:column;gap:8px;
+backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;
+border:1px solid var(--ring);box-shadow:0 14px 30px var(--shadow)}
+.card-front{background:linear-gradient(160deg,var(--card),#0c1e3a)}
+.card-back{transform:rotateY(180deg);background:linear-gradient(160deg,var(--card2),#0e2240)}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.num{font-weight:800;color:#9cc9ff;font-size:12px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;
+border-radius:999px;font-weight:700;font-size:11px;color:#fff;white-space:nowrap}
+.title{font-size:16px;font-weight:800}
+.desc{color:var(--muted);font-size:13px;line-height:1.5;flex:1}
+.howto{color:#deebff;font-size:13px;line-height:1.5;flex:1}
+
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+.tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;border:1px solid;white-space:nowrap}
+
+/* Schwierigkeit */
+.tag-easy {color:#4ade80;border-color:#4ade8055;background:#4ade8011}
+.tag-mid {color:#fbbf24;border-color:#fbbf2455;background:#fbbf2411}
+.tag-hard {color:#f97316;border-color:#f9731655;background:#f9731611}
+.tag-expert{color:#f87171;border-color:#f8717155;background:#f8717111}
+
+/* Zeit */
+.tag-time{color:#a78bfa;border-color:#a78bfa55;background:#a78bfa11}
+
+/* Phase */
+.tag-einstieg {color:#38bdf8;border-color:#38bdf855;background:#38bdf811}
+.tag-erarbeitung{color:#34d399;border-color:#34d39955;background:#34d39911}
+.tag-darstellung{color:#fb923c;border-color:#fb923c55;background:#fb923c11}
+.tag-sicherung {color:#e879f9;border-color:#e879f955;background:#e879f911}
+
+.flip-hint{font-size:10px;color:var(--muted);opacity:.4;text-align:right}
+.hidden{display:none!important}
+footer{border-top:1px solid #ffffff14;color:var(--muted);padding:20px 0 40px;font-size:12px}
+</style>
+</head>
+<body>
+<header class="container">
+<h1>🃏 Blaue Karten – 33 Lernmethoden</h1>
+<p class="lead">Karte anklicken zum Umdrehen · Praxistipp auf der Rückseite</p>
+</header> <section class="controls">
+<div class="container">
+<div class="wrap">
+
+          
+  <!-- Zeile 1: Suche + Kategorie -->
+  <div class="search-row">
+    <div class="search">
+      <span class="icon">🔎</span>
+      <input id="search" type="search" placeholder="Methode suchen …" />
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Kategorie</span>
+      <button class="pill active" data-group="cat" data-val="all">Alle</button>
+      <button class="pill" data-group="cat" data-val="visualisieren">🎨 Visualisieren</button>
+      <button class="pill" data-group="cat" data-val="texte">✍️ Texte</button>
+      <button class="pill" data-group="cat" data-val="praesentieren">🎤 Präsentieren</button>
+      <button class="pill" data-group="cat" data-val="wiederholen">🔁 Wiederholen</button>
+      <button class="pill" data-group="cat" data-val="vernetzen">🔗 Vernetzen</button>
+      <button class="pill" data-group="cat" data-val="diskutieren">💬 Diskutieren</button>
+    </div>
+  </div>
+
+  <!-- Zeile 2: Schwierigkeit -->
+  <div class="filter-group">
+    <span class="filter-label">Schwierigkeit</span>
+    <button class="pill active" data-group="diff" data-val="all">Alle</button>
+    <button class="pill" data-group="diff" data-val="easy">🟢 Einfach</button>
+    <button class="pill" data-group="diff" data-val="mid">🟡 Mittel</button>
+    <button class="pill" data-group="diff" data-val="hard">🟠 Anspruchsvoll</button>
+    <button class="pill" data-group="diff" data-val="expert">🔴 Herausfordernd</button>
+  </div>
+
+  <!-- Zeile 3: Zeitaufwand -->
+  <div class="filter-group">
+    <span class="filter-label">Zeitaufwand</span>
+    <button class="pill active" data-group="time" data-val="all">Alle</button>
+    <button class="pill" data-group="time" data-val="short">⚡ &lt; 20 Min.</button>
+    <button class="pill" data-group="time" data-val="mid">🕐 20–45 Min.</button>
+    <button class="pill" data-group="time" data-val="long">🕑 45–90 Min.</button>
+    <button class="pill" data-group="time" data-val="xlong">🕒 &gt; 90 Min.</button>
+  </div>
+
+  <!-- Zeile 4: Unterrichtsphase -->
+  <div class="filter-group">
+    <span class="filter-label">Unterrichtsphase</span>
+    <button class="pill active" data-group="phase" data-val="all">Alle</button>
+    <button class="pill" data-group="phase" data-val="einstieg">🔵 Kognitive Aktivierung</button>
+    <button class="pill" data-group="phase" data-val="erarbeitung">🟢 Erarbeitung</button>
+    <button class="pill" data-group="phase" data-val="darstellung">🟠 Darstellung</button>
+    <button class="pill" data-group="phase" data-val="sicherung">🟣 Sicherung / Abschluss</button>
+  </div>
+
+</div>
+<div class="result-count" id="count"></div>
+
+        
+
+</div>
+</section> <main class="container">
+<div id="grid" class="grid"></div>
+</main> <footer class="container">© 2009 hep verlag ag – Blaue Karten: 33 Lernmethoden</footer> <script>
+const CATS = {
+visualisieren: {label:'🎨 Visualisieren', color:'#2f80ed'},
+texte: {label:'✍️ Texte verfassen', color:'#27ae60'},
+praesentieren: {label:'🎤 Präsentieren', color:'#f2994a'},
+wiederholen: {label:'🔁 Wiederholen & Üben', color:'#9b51e0'},
+vernetzen: {label:'🔗 Vernetzen', color:'#2dcebd'},
+diskutieren: {label:'💬 Diskutieren', color:'#eb5757'},
+};
+
+const DIFF = {
+easy: {label:'🟢 Einfach', cls:'tag-easy'},
+mid: {label:'🟡 Mittel', cls:'tag-mid'},
+hard: {label:'🟠 Anspruchsvoll', cls:'tag-hard'},
+expert:{label:'🔴 Herausfordernd', cls:'tag-expert'},
+};
+
+const TIME = {
+short: {label:'⚡ < 20 Min.', cls:'tag-time'},
+mid: {label:'🕐 20–45 Min.', cls:'tag-time'},
+long: {label:'🕑 45–90 Min.', cls:'tag-time'},
+xlong: {label:'🕒 > 90 Min.', cls:'tag-time'},
+};
+
+const PHASE = {
+einstieg: {label:'🔵 Kognitive Aktivierung', cls:'tag-einstieg'},
+erarbeitung: {label:'🟢 Erarbeitung', cls:'tag-erarbeitung'},
+darstellung: {label:'🟠 Darstellung', cls:'tag-darstellung'},
+sicherung: {label:'🟣 Sicherung / Abschluss', cls:'tag-sicherung'},
+};
+
+// diff | time | phase(s)
+// phase: einstieg = kognitive Aktivierung/Einstieg
+// erarbeitung = während der Erarbeitung
+// darstellung = Darstellung der Lernergebnisse
+// sicherung = Sicherung / Lernabschluss
+const METHODS = [
+{n:1, t:'Advance Organizer', e:'🗺️', c:'vernetzen', diff:'hard', time:'mid', phase:['einstieg'],
+d:'Gedankliche Ankerpunkte schaffen; Vorwissen und Leitfragen grafisch verbinden. Orientierungshilfe zu Beginn einer Arbeit.',
+h:'Setze den Advance Organizer in die Mitte eines Blattes. Trage Vorwissen und Leitfragen ein und verbinde sie grafisch. Erweitere ihn fortlaufend.'},
+{n:2, t:'Brief', e:'✉️', c:'texte', diff:'mid', time:'mid', phase:['erarbeitung','darstellung'],
+d:'Briefe richten sich an eine bestimmte Person. Adressatengerecht formulieren: Was weiss sie schon? Wie schreibe ich so, dass sie es versteht?',
+h:'Richte dich klar an eine Person. Formuliere STARK: kurz, präzise, lebendig. Überlege, was dein Gegenüber schon weiss und was neu ist.'},
+{n:3, t:'Cluster', e:'🔵', c:'visualisieren', diff:'easy', time:'short', phase:['einstieg','erarbeitung'],
+d:'Kernbegriff in die Mitte schreiben. Schlüsselwörter frei assoziieren, einkreisen und durch Striche oder Pfeile verbinden.',
+h:'Lass den Gedankenfluss frei laufen. Jedes Wort kann ein neuer Kern werden. Verbinde inhaltlich Zusammengehöriges mit Pfeilen.'},
+{n:4, t:'Comicstrip', e:'🎬', c:'praesentieren', diff:'mid', time:'long', phase:['darstellung'],
+d:'Inhalt in eine Abfolge bringen: Schritt für Schritt. Für jeden Schritt eine Zeichnung – so entsteht ein Bilderstreifen der Big Points.',
+h:'Plane zuerst die Abfolge der Schritte. Zeichne für jeden Schritt ein einfaches Bild. Alternativ: Fotodokumentation statt Zeichnung.'},
+{n:5, t:'Diagramme', e:'📊', c:'visualisieren', diff:'mid', time:'mid', phase:['erarbeitung','darstellung'],
+d:'Informationen vergleichend darstellen: Kurvendiagramm (Verlauf), Säulendiagramm (Fakten), Kreisdiagramm (Mengen/Prozente).',
+h:'Wähle den Diagrammtyp passend zum Inhalt. Kreisdiagramm: Prozentangaben nötig. Kurvendiagramm: Verläufe über Zeit sichtbar machen.'},
+{n:6, t:'Disput', e:'⚖️', c:'diskutieren', diff:'expert', time:'long', phase:['erarbeitung','darstellung'],
+d:'Ein Thema aus unterschiedlichen Perspektiven betrachten. Argumente formulieren und grafisch gegenüberstellen – dann disputieren.',
+h:'Sammle zuerst alle Argumente pro und contra. Stelle sie in einer Matrix gegenüber. Verteile Rollen und führe den Disput durch.'},
+{n:7, t:'Flowchart', e:'🔀', c:'visualisieren', diff:'mid', time:'mid', phase:['erarbeitung','sicherung'],
+d:'Zusammenhänge aus übergeordneter Perspektive erkennen. Gedankenfluss skizzieren, Abläufe und Prozesse sichtbar machen.',
+h:'Starte mit dem Hauptprozess. Nutze Symbole: Rechteck = Schritt, Raute = Entscheidung. Farben und Pfeile erhöhen den Erinnerungswert.'},
+{n:8, t:'Graf-iz', e:'📝', c:'visualisieren', diff:'hard', time:'mid', phase:['erarbeitung','sicherung'],
+d:'Verbindung von grafischer Gestaltung und Notiz: Notizen → Visualisierung → 3 Kernaussagen → Links/Hinweise.',
+h:'1) Notizen machen. 2) Visualisieren (Mindmap, Skizze). 3) Drei Kernaussagen formulieren. 4) Links zu weiterführenden Infos ergänzen.'},
+{n:9, t:'Hypertext', e:'🔗', c:'vernetzen', diff:'hard', time:'xlong', phase:['erarbeitung'],
+d:'Informationen in Teile aufschlüsseln und durch Links verbinden. Mehrere Vertiefungsebenen schaffen.',
+h:'Zerlege das Thema in Einzelelemente. Verbinde sie durch Links. Schaffe Vertiefungsebenen: Haupttext → Erklärung → Beispiel.'},
+{n:10, t:'Interview', e:'🎤', c:'diskutieren', diff:'hard', time:'mid', phase:['erarbeitung','darstellung'],
+d:'Die wichtigsten Fragen zu einem Thema finden und Antworten formulieren. Fragen führen zum Kern der Dinge.',
+h:'Formuliere 5–10 Kernfragen. Beantworte sie präzise. Fragen wie „Warum?" und „Was bedeutet das?" führen zu tieferem Verständnis.'},
+{n:11, t:'Lernbild', e:'🖼️', c:'visualisieren', diff:'mid', time:'mid', phase:['sicherung'],
+d:'Kreativität und Fakten kombinieren. Inhalte auf wesentliche Aspekte reduzieren. Schlüsselwörter in Großbuchstaben + Symbole, Farben.',
+h:'Reduziere auf das Wesentliche. Schreibe Schlüsselwörter in Großbuchstaben. Ergänze Symbole, Zeichnungen und Farben für Stimmung.'},
+{n:12, t:'Lernkarten', e:'🃏', c:'wiederholen', diff:'easy', time:'mid', phase:['sicherung'],
+d:'Vorderseite: Frage (Definition, Sachverhalt, Vokabel). Rückseite: Antwort. Vielfältig einsetzbar als Kartei oder Patience.',
+h:'Formuliere klare, eindeutige Fragen. Eine Frage pro Karte. Nutze die Karten für Lernkartei oder Lernpatience.'},
+{n:13, t:'Lernpatience', e:'🎴', c:'wiederholen', diff:'easy', time:'mid', phase:['sicherung'],
+d:'Stapel Lernkarten; Start mit 3 Karten. Richtig beantwortet → obere Reihe; falsch → zurück in Stapel. Max. 20 Karten.',
+h:'Starte mit 3 Karten. Beantworte jede Frage laut. Richtig: Karte wandert nach oben. Falsch: zurück in den Stapel. Max. 20 Karten.'},
+{n:14, t:'Livegrafik', e:'✏️', c:'praesentieren', diff:'mid', time:'mid', phase:['darstellung'],
+d:'Grafik wird vor den Augen des Publikums entworfen. Einfache Elemente, klare Inhalte – mit wenigen Strichen den Kern darstellen.',
+h:'Übe die Grafik vorher. Nutze einfache Formen. Erkläre laut, was du zeichnest. Wenige, aber wirkungsvolle Elemente.'},
+{n:15, t:'Matrix', e:'🔲', c:'vernetzen', diff:'mid', time:'mid', phase:['erarbeitung','sicherung'],
+d:'Rechteckiges Schema; Dinge zueinander in Beziehung setzen. Beispiel: Kompetenzraster (Fähigkeiten × Niveaustufen).',
+h:'Definiere Zeilen und Spalten klar. Fülle die Felder mit konkreten Beschreibungen. Nutze Farben zur Gewichtung.'},
+{n:16, t:'Merkblatt', e:'📋', c:'texte', diff:'mid', time:'mid', phase:['sicherung'],
+d:'Wesentliche Punkte eines Themas; geordnete, logische Struktur. Grafische Elemente ergänzen und verstärken die Aussage.',
+h:'Wähle nur das Wichtigste aus. Gliedere logisch. Ergänze Symbole und Grafiken, die die Kernaussagen verstärken.'},
+{n:17, t:'Metaphergrafik', e:'🪨', c:'visualisieren', diff:'hard', time:'mid', phase:['einstieg','darstellung'],
+d:'Thema mit alltäglichen Gegenständen visualisieren. Gegenstände = Metaphern für inhaltliche Elemente; nach Kriterien ordnen.',
+h:'Wähle Gegenstände, die zum Thema passen. Weise jedem Gegenstand eine Bedeutung zu. Ordne sie nach inhaltlichen Kriterien.'},
+{n:18, t:'Mindmap', e:'🧠', c:'visualisieren', diff:'easy', time:'mid', phase:['einstieg','erarbeitung','sicherung'],
+d:'Thema in Zentrum (A3); Hauptäste = Hauptgedanken; Nebenäste = Nebengedanken. Schlüsselwörter in Großbuchstaben, Farben, Symbole.',
+h:'Nutze A3-Papier. Schreibe das Thema in die Mitte. Zeichne Hauptäste für Hauptgedanken. Ergänze Nebenäste und Symbole.'},
+{n:19, t:'Modell', e:'🏗️', c:'vernetzen', diff:'expert', time:'xlong', phase:['darstellung'],
+d:'Inhalte und Prozesse begreifbar machen. Produkt herstellen (z.B. Vulkan aus Papiermaché). Sorgfältige Planung nötig.',
+h:'Plane mit Skizze, Materialliste und Zeitplan. Baue das Modell Schritt für Schritt. Dokumentiere den Prozess.'},
+{n:20, t:'Pits', e:'🟡', c:'visualisieren', diff:'easy', time:'short', phase:['einstieg','erarbeitung'],
+d:'Post-its für Notizen, Gedanken, Erkenntnisse. Verschiedene Farben und Größen für Gliederung und Gewichtung.',
+h:'Nutze verschiedene Farben für verschiedene Kategorien. Sortiere, gruppiere und verbinde die Pits. Ergänze Zeichnungen.'},
+{n:21, t:'Post Organizer', e:'🗂️', c:'vernetzen', diff:'hard', time:'mid', phase:['sicherung'],
+d:'Wie Advance Organizer, aber nachträglich. Nach Vortrag/Lektüre Gedanken organisieren und neues Wissen integrieren.',
+h:'Nutze ihn direkt nach einem Vortrag oder einer Lektüre. Integriere neues Wissen mit Schlüsselwörtern und grafischen Elementen.'},
+{n:22, t:'PowerPoint', e:'💻', c:'praesentieren', diff:'hard', time:'xlong', phase:['darstellung'],
+d:'Inhalte strukturieren, gliedern, gewichten. Auf Kernaussagen reduzieren. Form und Inhalt müssen aufeinander abgestimmt sein.',
+h:'Maximal 3 Kernaussagen pro Folie. Nutze Bilder statt Text. Stimme Form und Inhalt ab – keine Effekthascherei.'},
+{n:23, t:'Protokoll', e:'📄', c:'texte', diff:'mid', time:'mid', phase:['erarbeitung','sicherung'],
+d:'Notizen weiterverarbeiten. Notizpapier zweiteilen: links ungeordnet, rechts das Wichtigste. Auch als Post-it-Entwurf möglich.',
+h:'Teile das Blatt: links Rohnotizen, rechts Kernaussagen. Verarbeite die Notizen zeitnah nach. Nutze Post-its als Zwischenschritt.'},
+{n:24, t:'Quiz', e:'❓', c:'wiederholen', diff:'easy', time:'mid', phase:['sicherung'],
+d:'Inhalt in Fragen aufgliedern. Spielkarten gestalten. Vielfältige Fragetypen (Multiple Choice, Schätzfragen). Antworten formulieren.',
+h:'Variiere die Fragetypen. Formuliere klare, eindeutige Antworten. Gestalte die Karten ansprechend und spielbar.'},
+{n:25, t:'Rollenspiel', e:'🎭', c:'diskutieren', diff:'expert', time:'long', phase:['erarbeitung','darstellung'],
+d:'Verschiedene Perspektiven und Argumente vertreten. In Situation versetzen und Argumente möglichst „echt" vertreten.',
+h:'Verteile Rollen klar. Sammle vorher Argumente für jede Rolle. Versetze dich wirklich in die Perspektive der Person.'},
+{n:26, t:'Scribbles', e:'✏️', c:'visualisieren', diff:'easy', time:'short', phase:['einstieg','erarbeitung'],
+d:'Strukturierte/unstrukturierte Zeichnungen, Skizzen, Symbole. Gedanken greifbarer machen und Möglichkeiten entwickeln.',
+h:'Fang einfach an zu zeichnen. Kein Perfektionismus. Scribbles helfen, Ideen zu entwickeln und Denkblockaden zu lösen.'},
+{n:27, t:'Speedinput', e:'⚡', c:'praesentieren', diff:'hard', time:'mid', phase:['darstellung'],
+d:'Kurzpräsentation 3–5 Minuten. 2–3 wichtigste Aspekte. Klare gedankliche Abfolge und präzise Sprache.',
+h:'Beschränke dich auf 2–3 Kernaussagen. Übe die Zeitvorgabe. Visualisiere die Kernaussagen auf einem Plakat oder einer Grafik.'},
+{n:28, t:'Spicker', e:'📌', c:'texte', diff:'mid', time:'mid', phase:['sicherung'],
+d:'Wichtiges von Unwichtigem unterscheiden. Relevante Infos auf kleinformatiges Blatt. Prinzipien: reduzieren + strukturieren.',
+h:'Reduziere auf das Wesentliche. Strukturiere so, dass alles auf einen Blick erfassbar ist. Nutze Symbole und Abkürzungen.'},
+{n:29, t:'Strukturskizze', e:'🕸️', c:'visualisieren', diff:'mid', time:'mid', phase:['erarbeitung','sicherung'],
+d:'Stichworte und Skizzen miteinander verbinden. Zusammenhänge sichtbar machen. Auch mit Post-its möglich.',
+h:'Verbinde Stichworte mit Linien und Pfeilen. Nutze Post-its für leichte Umstrukturierung. Zeige Beziehungen zwischen Elementen.'},
+{n:30, t:'Vortrag / Demo', e:'🎙️', c:'praesentieren', diff:'hard', time:'long', phase:['darstellung'],
+d:'Thema umfassend darstellen. Wesentliche Elemente in logische Reihenfolge bringen. Wenige, aber wirkungsvolle Bilder/Grafiken.',
+h:'Kläre: Was sind die wesentlichen Elemente? Bringe sie in logische Reihenfolge. Nutze wenige, aber wirkungsvolle Visualisierungen.'},
+{n:31, t:'Werbebroschüre', e:'📰', c:'texte', diff:'hard', time:'xlong', phase:['darstellung'],
+d:'Thema als Flyer/Broschüre darstellen. Wesentliche Elemente herausarbeiten, ordnen, gewichten. Stil an Publikum anpassen.',
+h:'Arbeite die Kernaussagen heraus. Gestalte attraktiv mit Titel, kurzen Texten und grafischen Elementen. Passe den Stil ans Publikum an.'},
+{n:32, t:'Zeitungsartikel', e:'🗞️', c:'texte', diff:'hard', time:'long', phase:['darstellung'],
+d:'Journalistischer Text: 6 W (Wer, Was, Wo, Wann, Wie, Warum). Lead voranstellen. Titel als Leseanreiz. Bilder/Grafiken ergänzen.',
+h:'Beantworte die 6 W. Schreibe einen knappen Lead. Wähle einen Titel, der Lust aufs Lesen macht. Ergänze Bilder oder Grafiken.'},
+{n:33, t:'Anleitung', e:'📖', c:'texte', diff:'mid', time:'mid', phase:['darstellung','sicherung'],
+d:'Andere Person befähigen, eine Tätigkeit nachzuvollziehen. Schritt-für-Schritt-Struktur. So formulieren, dass Unkundige es verstehen.',
+h:'Schreibe für Unkundige. Nummeriere jeden Schritt. Teste die Anleitung: Kann jemand ohne Vorwissen damit arbeiten?'},
+];
+
+function buildCard(m) {
+const cat = CATS[m.c];
+const d = DIFF[m.diff];
+const ti = TIME[m.time];
+const phaseTags = m.phase.map(p => `<span class="tag ${PHASE[p].cls}">${PHASE[p].label}</span>`).join('');
+return `<div class="card"
+data-cat="${m.c}"
+data-diff="${m.diff}"
+data-time="${m.time}"
+data-phase="${m.phase.join(',')}"
+data-text="${(m.t+' '+m.d+' '+m.h).toLowerCase()}">
+<div class="card-inner">
+<div class="card-face card-front">
+<div class="top">
+<span class="num">#${m.n}</span>
+<span class="badge" style="background:${cat.color}">${cat.label}</span>
+</div>
+<div class="title">${m.e} ${m.t}</div>
+<div class="desc">${m.d}</div>
+<div class="tags">
+<span class="tag ${d.cls}">${d.label}</span>
+<span class="tag ${ti.cls}">${ti.label}</span>
+${phaseTags}
+</div>
+<div class="flip-hint">↩ umdrehen für Praxistipp</div>
+</div>
+<div class="card-face card-back">
+<div class="top">
+<span class="num">#${m.n}</span>
+<span class="badge" style="background:${cat.color}">${cat.label}</span>
+</div>
+<div class="title">${m.e} Praxistipp</div>
+<div class="howto">💡 ${m.h}</div>
+<div class="tags">
+<span class="tag ${d.cls}">${d.label}</span>
+<span class="tag ${ti.cls}">${ti.label}</span>
+${phaseTags}
+</div>
+<div class="flip-hint">↩ zurückdrehen</div>
+</div>
+</div>
+</div>`;
+}
+
+function render() {
+const grid = document.getElementById('grid');
+grid.innerHTML = METHODS.map(buildCard).join('');
+grid.querySelectorAll('.card').forEach(card => {
+card.addEventListener('click', () => card.classList.toggle('flipped'));
+});
+}
+
+const active = {cat:'all', diff:'all', time:'all', phase:'all'};
+
+function apply() {
+const q = document.getElementById('search').value.trim().toLowerCase();
+let visible = 0;
+document.querySelectorAll('.card').forEach(el => {
+const okCat = active.cat === 'all' || el.dataset.cat === active.cat;
+const okDiff = active.diff === 'all' || el.dataset.diff === active.diff;
+const okTime = active.time === 'all' || el.dataset.time === active.time;
+const okPhase = active.phase === 'all' || el.dataset.phase.split(',').includes(active.phase);
+const okText = !q || el.dataset.text.includes(q);
+const show = okCat && okDiff && okTime && okPhase && okText;
+el.classList.toggle('hidden', !show);
+if(show) visible++;
+});
+document.getElementById('count').textContent = `${visible} von 33 Methoden angezeigt`;
+}
+
+function setupControls() {
+document.querySelectorAll('.pill').forEach(btn => {
+btn.addEventListener('click', () => {
+const group = btn.dataset.group;
+document.querySelectorAll(`.pill[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+active[group] = btn.dataset.val;
+apply();
+});
+});
+document.getElementById('search').addEventListener('input', apply);
+}
+
+document.addEventListener('DOMContentLoaded', () => { render(); setupControls(); apply(); });
+</script> </body>
+</html> 
